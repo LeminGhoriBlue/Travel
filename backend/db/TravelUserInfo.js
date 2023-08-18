@@ -21,4 +21,4 @@ const productSchema = new mongoose.Schema({
     userEmail:String
 });
 
-module.exports = mongoose.model("userInfo", productSchema);
+module.exports = mongoose.model("traveluserinfo", productSchema);
