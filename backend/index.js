@@ -6,7 +6,7 @@ const TravelUser = require("./db/TravelUser");
 const TravelUserInfo = require("./db/TravelUserInfo");
 
 const Jwt = require("jsonwebtoken");
-const jwtKey = process.env.JWT_KEY || "portfolio";
+const jwtKey = process.env.JWT_KEY || "travel";
 
 const app = express();
 const PORT = process.env.PORT || 5050;

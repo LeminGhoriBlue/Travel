@@ -24,7 +24,7 @@ function SignUpForm({ setType }) {
     }
     if (state.name !== "" || state.email !== "" || state.password !== "") {
       await axios
-        .post("https://travel-backend-lxsg.onrender.com/register", {
+        .post("https://ssssss-jzf4.onrender.com/register", {
           name: state.name,
           email: state.email,
           password: state.password,
