@@ -2,8 +2,7 @@ import React from "react";
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 
-function SignInForm({ setUserValied }) {
-  const navigate = useNavigate();
+function SignInForm({setUserValid}) {
   const [state, setState] = React.useState({
     name: "",
     password: ""
@@ -28,25 +27,19 @@ function SignInForm({ setUserValied }) {
         password: state.password,
       })
       .then((res) => {
-        let data = res.data;
-        if (data.token) {
-          setUserValied(true)
-          localStorage.setItem("user", JSON.stringify(data.user));
-          localStorage.setItem("token", JSON.stringify(data.token));
-          navigate(`/${state.name}`)
-          state.name = "";
-          state.password = "";
-          setState({ ...state });
-          window.location.reload()
+        if (res.data.token) {
+          localStorage.setItem("user", JSON.stringify(res.data.user));
+          localStorage.setItem("token", JSON.stringify(res.data.token));  
+          setUserValid(true)
         } else {
           alert("Please enter correct details!");
+          setUserValid(false)
         }
       })
       .catch((error) => {
         console.log(error);
       });
-  };
-
+  };  
   return (
     <div className="form-container sign-in-container">
       <form >

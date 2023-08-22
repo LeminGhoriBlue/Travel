@@ -3,7 +3,7 @@ import "./index.css";
 import SignInForm from "./SignIn";
 import SignUpForm from "./SignUp";
 
-export default function Login({setUserValied}) {
+export default function Login({setUserValid}) {
   const [type, setType] = useState("signIn");
   const handleOnClick = text => {
     if (text !== type) {
@@ -12,12 +12,12 @@ export default function Login({setUserValied}) {
     }
   };
   const containerClass =
-    "container " + (type === "signUp" ? "right-panel-active" : "");
+    "container1 " + (type === "signUp" ? "right-panel-active" : "");
   return (
     <div className="login">
-      <div className={containerClass} id="container">
+      <div className={containerClass} id="container1">
         <SignUpForm setType={setType}/>
-        <SignInForm setUserValied={setUserValied}/>
+        <SignInForm setUserValid={setUserValid}/>
         <div className="overlay-container">
           <div className="overlay">
             <div className="overlay-panel overlay-left">

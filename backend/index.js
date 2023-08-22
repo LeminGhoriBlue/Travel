@@ -2,11 +2,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
-const TravelUser = require("./db/TravelUser");
-const TravelUserInfo = require("./db/TravelUserInfo");
+const User = require("./db/User");
+const UserInfo = require("./db/UserInfo");
 
 const Jwt = require("jsonwebtoken");
-const jwtKey = process.env.JWT_KEY || "travel";
+const jwtKey = process.env.JWT_KEY || "portfolio";
 
 const app = express();
 const PORT = process.env.PORT || 5050;
@@ -24,17 +24,17 @@ mongoose
 
   app.post("/register", async (req, res) => {
     try {
-      const existingUser = await TravelUser.findOne({ email: req.body.email });
-      const existingUserName = await TravelUser.findOne({ name: req.body.name });
+      const existingUser = await User.findOne({ email: req.body.email });
+      const existingUserName = await User.findOne({ name: req.body.name });
       if (existingUser) {
-        return res.status(400).send({ message: "TravelUser with this email already exists" });
+        return res.status(400).send({ message: "User with this email already exists" });
       }
 
       if (existingUserName) {
-        return res.status(400).send({ message: "TravelUser with this Name already exists" });
+        return res.status(400).send({ message: "User with this Name already exists" });
       }
       
-      let user = new TravelUser(req.body);
+      let user = new User(req.body);
       let result = await user.save();
       result = result.toObject();
       delete result.password;
@@ -52,7 +52,7 @@ mongoose
   
 
 app.post("/login", async (req, res) => {
-  let user = await TravelUser.findOne(req.body).select("-password");
+  let user = await User.findOne(req.body).select("-password");
   if (req.body.name && req.body.password) {
     if (user) {
       // res.send(user);
@@ -63,7 +63,7 @@ app.post("/login", async (req, res) => {
         res.status(200).send({ user, token: token });
       });
     } else {
-      res.status(400).send({ msg: "TravelUser not found!" });
+      res.status(400).send({ msg: "User not found!" });
     }
   } else {
     res.status(500).send({ msg: "Something went wrong!" });
@@ -72,13 +72,13 @@ app.post("/login", async (req, res) => {
 
 app.post('/add-userInfo', verifyToken, async (req, res) => {
   try {
-    const existingUser = await TravelUserInfo.findOne({ uniqueId: req.body.uniqueId });
+    const existingUser = await UserInfo.findOne({ uniqueId: req.body.uniqueId });
     
     if (existingUser) {
       return res.status(400).json({ error: 'uniqueId already exists' });
     }
 
-    const userInfo = new TravelUserInfo(req.body);
+    const userInfo = new UserInfo(req.body);
     const result = await userInfo.save();
     res.send(result);
   } catch (error) {
@@ -87,18 +87,18 @@ app.post('/add-userInfo', verifyToken, async (req, res) => {
   }
 });
 
-app.get("/TravelUserInfo", verifyToken, async (req, res) => {
-  let userInfo = await TravelUserInfo.find();
+app.get("/UserInfo", verifyToken, async (req, res) => {
+  let userInfo = await UserInfo.find();
   if (userInfo.length > 0) {
     res.status(200).send(userInfo);
   } else {
-    res.status(400).send({ msg: "No TravelUserInfo found!" });
+    res.status(400).send({ msg: "No UserInfo found!" });
   }
 });
 
 
 app.get("/userInfo/:name",  async (req, res) => {
-  let result = await TravelUserInfo.findOne({ uniqueId: req.params.name });
+  let result = await UserInfo.findOne({ uniqueId: req.params.name });
   if (result) {
     res.status(200).send(result);
   } else {
@@ -107,7 +107,7 @@ app.get("/userInfo/:name",  async (req, res) => {
 });
 
 app.put("/update-userInfo/:id", verifyToken, async (req, res) => {
-  let result = await TravelUserInfo.updateOne(
+  let result = await UserInfo.updateOne(
     { _id: req.params.id },
     { $set: req.body }
   );

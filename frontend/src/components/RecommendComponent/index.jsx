@@ -1,0 +1,18 @@
+import React from 'react'
+import Navbar from '../Navbar'
+import Recommend from '../Recommend'
+import Footer from '../Footer'
+
+function RecommendComponent() {
+    return (
+        <>
+            <Navbar />
+            <div style={{ minHeight: "655px" }}>
+                <Recommend />
+            </div>
+            <Footer />
+        </>
+    )
+}
+
+export default RecommendComponent
