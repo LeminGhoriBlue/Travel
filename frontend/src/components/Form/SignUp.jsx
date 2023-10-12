@@ -24,7 +24,7 @@ function SignUpForm({ setType }) {
     }
     if (state.name !== "" || state.email !== "" || state.password !== "") {
       await axios
-        .post("https://ssssss-jzf4.onrender.com/register", {
+        .post("http://localhost:5050/register", {
           name: state.name,
           email: state.email,
           password: state.password,
@@ -41,6 +41,7 @@ function SignUpForm({ setType }) {
         })
         .catch((error) => {
           console.log(error);
+          alert(error)
         });
     }
   };
@@ -67,6 +68,7 @@ function SignUpForm({ setType }) {
           value={state.name}
           onChange={handleChange}
           placeholder="Name"
+          required
         />
         <input
           type="email"
@@ -74,6 +76,7 @@ function SignUpForm({ setType }) {
           value={state.email}
           onChange={handleChange}
           placeholder="Email"
+          required
         />
         <input
           type="password"
@@ -81,6 +84,7 @@ function SignUpForm({ setType }) {
           value={state.password}
           onChange={handleChange}
           placeholder="Password"
+          required
         />
         <button onClick={handleSignup}>Sign Up</button>
       </form>

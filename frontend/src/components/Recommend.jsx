@@ -6,11 +6,14 @@ import Destination3 from "../assets/Destination3.png";
 import Destination4 from "../assets/Destination4.png";
 import Destination5 from "../assets/Destination5.png";
 import Destination6 from "../assets/Destination6.png";
+import Destination7 from "../assets/Destination7.png";
+import Destination8 from "../assets/Destination8.png";
 import info1 from "../assets/info1.png";
 import info2 from "../assets/info2.png";
 import info3 from "../assets/info3.png";
+import axios from "axios";
 
-export default function Recommend() {
+export default function Recommend({setUserValid}) {
   const [active, setActive] = useState('The Weekend Break');
   const [filterData ,setFilterData] = useState([]); 
 
@@ -21,6 +24,7 @@ export default function Recommend() {
       title: "Singapore",
       subTitle: "Singapore, officialy thr Republic of Singapore, is a",
       cost: "38,800",
+      km: "5000km",
       duration: "Approx 2 night trip",
     },
     {
@@ -29,6 +33,7 @@ export default function Recommend() {
       title: "Thailand",
       subTitle: "Thailand is a Southeast Asia country. It's known for",
       cost: "54,200",
+      km: "3000km",
       duration: "Approx 2 night trip",
     },
     {
@@ -37,6 +42,7 @@ export default function Recommend() {
       title: "Paris",
       subTitle: "Paris, France's capital, is a major European city and a",
       cost: "45,500",
+      km: "7000km",
       duration: "Approx 2 night trip",
     },
     {
@@ -45,6 +51,7 @@ export default function Recommend() {
       title: "New Zealand",
       subTitle: "New Zealand is an island country in the",
       cost: "24,100",
+      km: "2000km",
       duration: "Approx 1 night trip",
     },
     {
@@ -53,6 +60,7 @@ export default function Recommend() {
       title: "Bora Bora",
       subTitle: "Bora Bora is a small South Pacific island northwest of",
       cost: "95,400",
+      km: "9000km",
       duration: "Approx 2 night 2 day trip",
     },
     {
@@ -61,10 +69,61 @@ export default function Recommend() {
       title: "London",
       subTitle: "London, the capital of England and the United",
       cost: "38,800",
+      km: "7000km",
       duration: "Approx 3 night 2 day trip",
+    },{
+      packAgeType:'The Weekend Break',
+      image: Destination7,
+      title: "New York",
+      subTitle: "New  york, often called New york city or NYC , is the most populous city in US.",
+      cost: "1,00,000",
+      km: "8000km",
+      duration: "Approx 15 day trip",
+    },
+    {
+      packAgeType:'The Package Holiday',
+      image: Destination8,
+      title: "Hong Kong",
+      subTitle: "Hong Kong, officially the Hong Kong Special Administrative Region of the People's Republic of China, is a city and a special administrative region in China.",
+      cost: "2,50,000",
+      km: "9000km",
+      duration: "Approx 1 Month trip",
     },
   ];
-
+  const handleBooking = (destination) => {
+    try {
+      if (!localStorage.getItem('user').name) {
+        setUserValid(true);
+        const token = JSON.parse(localStorage.getItem("token"));
+        console.log(destination);
+        const email = JSON.parse(localStorage.getItem("user")).email;
+        const data = {
+          ...destination,
+          email: email // Include the email in the data object
+        };
+        axios
+          .post(
+            `http://localhost:5050/add-trip`,
+            data,
+            {
+              headers: {
+                authorization: token,
+              },
+            }
+          )
+          .then((res) => {
+            window.location.href = "/booking";
+          });
+      }else {
+        setUserValid(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setUserValid(false);
+alert(error)
+    }
+  }
+  
   const packages = [
     "The Weekend Break",
     "The Package Holiday",
@@ -76,7 +135,7 @@ export default function Recommend() {
    let filterDatas= data.filter((val)=>{
       return val.packAgeType == 'The Weekend Break'
     })
-  setFilterData(filterDatas)
+  setFilterData(filterDatas);
   },[]);
 
 const FilterDatafc =(pkt)=>{
@@ -110,7 +169,12 @@ const FilterDatafc =(pkt)=>{
           return (
             <div className="destination" key={ind}>
               <img src={destination.image} alt="" />
+              <div className="title">
               <h3>{destination.title}</h3>
+              <div className="book">
+              <button className="book-btn btn" onClick={()=>{handleBooking(destination)}}>Book Now</button>
+              </div>
+              </div>
               <p>{destination.subTitle}</p>
               <div className="info">
                 <div className="services">
@@ -121,7 +185,7 @@ const FilterDatafc =(pkt)=>{
                 <h4>{destination.cost}</h4>
               </div>
               <div className="distance">
-                <span>1000 Kms</span>
+                <span>{destination.km}</span>
                 <span>{destination.duration}</span>
               </div>
             </div>
@@ -154,6 +218,53 @@ const Section = styled.section`
       }
     }
   }
+  .title{
+    .book{
+        margin: 0px 68px;
+      .btn {
+        box-sizing: border-box;
+        appearance: none;
+        background-color: transparent;
+        border: 2px solid #e74c3c;
+        border-radius: 0.6em;
+        color: #e74c3c;
+        cursor: pointer;
+        display: flex;
+        align-self: center;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1;
+        margin: 20px;
+        padding: 1.2em 2.8em;
+        text-decoration: none;
+        text-align: center;
+        text-transform: uppercase;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+      
+        .btn:hover,
+        .btn:focus {
+          color: #fff;
+          outline: 0;
+        }
+      }      
+      .book-btn {
+        color: #6f6f9d;
+        border-color: #ceced7;
+        background: {
+          image: linear-gradient(45deg, #f1c40f 50%, transparent 50%);
+          position: 100%;
+          size: 400%;
+        }
+        transition: background 300ms ease-in-out;
+        
+        &:hover {
+          background-position: 0;
+        }
+      }
+    }
+  }
+  
   .destinations {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -173,6 +284,8 @@ const Section = styled.section`
       }
       img {
         width: 100%;
+        overflow: hidden;
+        border-radius: 10px;
       }
       .info {
         display: flex;

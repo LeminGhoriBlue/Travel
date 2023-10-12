@@ -3,14 +3,13 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 const User = require("./db/User");
-const UserInfo = require("./db/UserInfo");
+const TripModel = require("./db/trip");
 
 const Jwt = require("jsonwebtoken");
 const jwtKey = process.env.JWT_KEY || "portfolio";
-
 const app = express();
 const PORT = process.env.PORT || 5050;
-app.use(express.json());
+app.use(express.json()); 
 app.use(cors());
 
 mongoose
@@ -49,7 +48,55 @@ mongoose
       res.status(500).send({ message: "An error occurred while registering user" });
     }
   });
+
+  app.get('/api/trips', verifyToken, async (req, res) => {
+    try {
+      // Query the database to get trips based on the email ID filter
+      const trips =  await TripModel.aggregate([{ $match: { email:req.query.email } }])
+    
+      // Send the retrieved data as a JSON response
+      res.json(trips);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred while fetching trips' });
+    }
+  });
   
+  
+  app.post('/add-trip', verifyToken, async (req, res) => {
+    try {
+      const existingTrip = await TripModel.findOne({ email: req.body.email, title: req.body.title });
+      if (existingTrip) {
+        // If the trip already exists, handle the error accordingly
+        res.status(400).json({ error: 'Trip already exists' });
+      } else {
+        // Create a new trip with the provided information
+        const newTrip = new TripModel(req.body);
+        const result = await newTrip.save();
+        res.send(result);
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred while saving trip information' });
+    }
+  });
+
+  app.delete('/delete-trip', verifyToken, async (req, res) => {
+    try {
+      const email = req.query.email;
+      const title = req.query.title;
+      
+      const result = await TripModel.deleteOne({ email: email, title: title });
+  
+      if (result.deletedCount === 1) {
+        res.status(200).json({ message: 'Trip Data deleted successfully' });
+      } else {
+        res.status(404).json({ message: 'Trip data not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
 
 app.post("/login", async (req, res) => {
   let user = await User.findOne(req.body).select("-password");
@@ -70,64 +117,17 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post('/add-userInfo', verifyToken, async (req, res) => {
-  try {
-    const existingUser = await UserInfo.findOne({ uniqueId: req.body.uniqueId });
-    
-    if (existingUser) {
-      return res.status(400).json({ error: 'uniqueId already exists' });
-    }
-
-    const userInfo = new UserInfo(req.body);
-    const result = await userInfo.save();
-    res.send(result);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'An error occurred while saving user information' });
-  }
-});
-
-app.get("/UserInfo", verifyToken, async (req, res) => {
-  let userInfo = await UserInfo.find();
-  if (userInfo.length > 0) {
-    res.status(200).send(userInfo);
-  } else {
-    res.status(400).send({ msg: "No UserInfo found!" });
-  }
-});
-
-
-app.get("/userInfo/:name",  async (req, res) => {
-  let result = await UserInfo.findOne({ uniqueId: req.params.name });
-  if (result) {
-    res.status(200).send(result);
-  } else {
-    res.status(400).send({ msg: "No records found!" });
-  }
-});
-
-app.put("/update-userInfo/:id", verifyToken, async (req, res) => {
-  let result = await UserInfo.updateOne(
-    { _id: req.params.id },
-    { $set: req.body }
-  );
-  res.status(200).send(result);
-});
-
 function verifyToken(req, res, next) {
-  let token = req.headers["authorization"];
-  if (token) {
-    token = token.split(" ")[1];
-    Jwt.verify(token, jwtKey, (err, valid) => {
-      if (err) {
-        res.status(401).sen({ message: "Please provide valid token" });
-      } else {
-        next();
-      }
-    });
-  } else {
-    res.status(403).send({ message: "Please add token with header" });
-  }
+  const token = req.header('authorization');
+
+  if (!token) return res.status(401).json({ message: 'Token not provided' });
+
+  Jwt.verify(token, jwtKey, (err, decoded) => {
+    if (err) return res.status(403).json({ message: 'Invalid token' });
+
+    req.user = decoded.user;
+    next();
+  });
 }
 
 app.listen(PORT, () => {

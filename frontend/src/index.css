@@ -1,0 +1,13 @@
+.css-bdhsul-MuiTypography-root-MuiDialogTitle-root{
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+.css-ypiqx9-MuiDialogContent-root{
+    width: 510px;
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #434242a8;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}

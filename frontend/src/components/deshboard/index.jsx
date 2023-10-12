@@ -8,7 +8,7 @@ import Testimonials from "../Testimonials";
 import Footer from "../Footer";
 import scrollreveal from "scrollreveal";
 
-function Deshboard() {
+function Deshboard({setUserValid}) {
   useEffect(()=>{
     const sr = scrollreveal({
       origin: "top",
@@ -37,7 +37,7 @@ function Deshboard() {
       <Navbar />
       <Hero />
       <Services />
-      <Recommend />
+      <Recommend setUserValid={setUserValid}/>
       <Testimonials />
       <Footer />
     </div>

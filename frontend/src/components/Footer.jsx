@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 export default function Footer() {
   return (
     <FooterContainer>
-      <span>Copyright &copy; 2023 Travelo. All rights reserved</span>
+      <span>Copyright &copy; 2023 Smruti Sorathiya. All rights reserved</span>
       <ul className="links">
         <li>
           <Link to="/">Home</Link>

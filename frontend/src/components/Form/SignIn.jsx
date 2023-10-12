@@ -1,9 +1,9 @@
-import React from "react";
+import React,{useState} from "react";
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 
 function SignInForm({setUserValid}) {
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     name: "",
     password: ""
   });
@@ -22,7 +22,7 @@ function SignInForm({setUserValid}) {
       return false;
     }
     await axios
-      .post(`https://ssssss-jzf4.onrender.com/login`, {
+      .post(`http://localhost:5050/login`, {
         name: state.name,
         password: state.password,
       })
@@ -30,7 +30,7 @@ function SignInForm({setUserValid}) {
         if (res.data.token) {
           localStorage.setItem("user", JSON.stringify(res.data.user));
           localStorage.setItem("token", JSON.stringify(res.data.token));  
-          setUserValid(true)
+          setUserValid(true);
         } else {
           alert("Please enter correct details!");
           setUserValid(false)
@@ -38,6 +38,7 @@ function SignInForm({setUserValid}) {
       })
       .catch((error) => {
         console.log(error);
+        alert(error)
       });
   };  
   return (
@@ -63,6 +64,7 @@ function SignInForm({setUserValid}) {
             name="name"
             value={state.name}
             onChange={handleChange}
+            required
           />
           <input
             type="password"
@@ -70,6 +72,7 @@ function SignInForm({setUserValid}) {
             placeholder="Password"
             value={state.password}
             onChange={handleChange}
+            required
           />
         </div>
         {/* <a href="">Forgot your password?</a> */}

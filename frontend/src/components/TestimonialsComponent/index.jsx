@@ -3,12 +3,12 @@ import Navbar from '../Navbar'
 import Testimonials from '../Testimonials'
 import Footer from '../Footer'
 
-function TestimonialsComponent() {
+function TestimonialsComponent({setUserValid}) {
   return (
     <>
         <Navbar/>
         <div style={{minHeight:"655px"}}>
-        <Testimonials/>
+        <Testimonials />
         </div>
         <Footer/>
     </>

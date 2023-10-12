@@ -4,23 +4,53 @@ import logo from "../assets/logo.png";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { VscChromeClose } from "react-icons/vsc";
 import { Link ,useParams} from "react-router-dom";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
+import { Button } from "@mui/material";
 export default function Navbar() {
   const [navbarState, setNavbarState] = useState(false);
   const [navActive ,setNavActive]=useState('');
+  const [userData,setUserData]= useState({});
+  const [open, setOpen] = React.useState(false);
+  const [islogin,setIslogin]=useState(false);
+
+  const handleClickOpen = () => {
+    try{
+      if(JSON.parse(localStorage.getItem("user")).email){
+        setUserData(JSON.parse(localStorage.getItem("user")))
+        setOpen(true);
+      }
+    }catch{
+      setOpen(false);
+
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   useEffect(()=>{
     const url = window.location.href;
     const pattern = /\/[^/]+\/([^/]+)/;
     const match = url.match(pattern);
     setNavActive(match?.[1])
   },[])
-
-  console.log(navActive);
+  const handleDelete =()=>{
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("login");
+    setOpen(false);
+  }
   return (
     <>
       <Nav>
-        <div className="brand">
+        <div className="brand" style={{display:"flex"}}>
+            <img src={logo} alt="" onClick={handleClickOpen}/>
           <Link className="container logoLink" >
-            <img src={logo} alt="" />
             Travelo
           </Link>
           <div className="toggle">
@@ -44,6 +74,9 @@ export default function Navbar() {
           </li>
           <li>
             <Link to="/testimonials" className={navActive == 'testimonials' ? 'active' : ''} onClick={()=>{setNavActive('testimonials')}}>Testimonials</Link>
+          </li>
+          <li>
+            <Link to="/booking" className={navActive == 'booking' ? 'active' : ''} onClick={()=>{setNavActive('booking')}}>Booking</Link>
           </li>
         </ul>
       </Nav>
@@ -69,8 +102,37 @@ export default function Navbar() {
               Testimonials
             </Link>
           </li>
+          <li>
+            <Link href="/booking" onClick={() => setNavbarState(false)}>
+              Booking
+            </Link>
+          </li>
         </ul>
       </ResponsiveNav>
+      <Dialog
+        open={open}
+        keepMounted
+        onClose={handleClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>User Info</DialogTitle>
+        <DialogContent>
+          <tr>
+            <td style={{    width: "96px"}}>Email</td>
+            <td>{userData.email}</td>
+          </tr>
+          <tr>
+            <td style={{    width: "96px"}}>Name</td>
+            <td>{userData.name}</td>
+          </tr>
+        </DialogContent>
+        
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleDelete}>Logout</Button>
+        </DialogActions>
+      
+      </Dialog>
     </>
   );
 }

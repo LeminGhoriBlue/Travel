@@ -15,7 +15,7 @@ export default function Login({setUserValid}) {
     "container1 " + (type === "signUp" ? "right-panel-active" : "");
   return (
     <div className="login">
-      <div className={containerClass} id="container1">
+      <div className={`${containerClass} container`} id="container1">
         <SignUpForm setType={setType}/>
         <SignInForm setUserValid={setUserValid}/>
         <div className="overlay-container">
